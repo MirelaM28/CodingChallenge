@@ -2,6 +2,11 @@
 
 input_file=/root/logs.log
 
+#Pretty formatting header
+printf "%9s %12s %11s %11s %8s \n" "Task ID" "Start Time" "End Time" "Duration" "Alert"
+printf "%9s %12s %12s %11s %8s \n" "---------" "------------" "------------" "-----------" "--------"
+
+
 #Function to read file content and extract only lines containing tasks
 retrieve_tasks_ids(){
   tasks=""
@@ -19,7 +24,7 @@ retrieve_tasks_ids(){
 
 retrieve_tasks_ids
 
-#Task to retrieve when a task starts and ends + calculate duration
+#Function that checks when a task starts and ends + calculate duration
 #Tricky part is that some tasks ids are also part of other lines PIDs (for example 051)
 
 start_end_tasks(){
@@ -57,10 +62,15 @@ start_end_tasks(){
                 message="Error"
         fi
 
-	echo "$id | $start_task | $end_task | $hours:$minutes:$seconds | $message " 
+#	echo "$id | $start_task | $end_task | $hours:$minutes:$seconds | $message " 
+#For pretty formatting
+	printf "%1s %7s %1s %10s %1s %10s %1s %8s %1s %7s %1s \n" "|" "$id" "|" "$start_task" "|" "$end_task" "|" "$hours:$minutes:$seconds" "|" "$message" "|"
+
 
   done
 
 }
-
 start_end_tasks
+
+#Pretty format footer
+printf "%58s \n" "----------------------------------------------------------"
