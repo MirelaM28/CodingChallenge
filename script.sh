@@ -19,5 +19,27 @@ retrieve_tasks_ids(){
 
 retrieve_tasks_ids
 
+#Task to retrieve when a task starts and ends + calculate duration
+#Tricky part is that some tasks ids are also part of other lines PIDs (for example 051)
 
-echo "${tasks_ids[@]}"
+start_end_tasks(){
+  for id in ${tasks_ids[@]}
+  do
+  	start_task=$(awk -F, -v id="$id" '$2 ~ 'task' id && /START/{print $1}' $input_file)
+	end_task=$(awk -F, -v id="$id" '$2 ~ 'task' id && /END/{print $1}' $input_file)
+
+	start_seconds=$(date -d "$start_task" +%s)
+	end_seconds=$(date -d "$end_task" +%s)
+	
+	difference=$(( $end_seconds - $start_seconds ))
+	hours=$(( difference / 3600 ))
+	minutes=$(( ( difference % 3600 ) / 60 ))
+	seconds=$(( difference % 60 ))
+
+	echo "$id | $start_task | $end_task | $hours:$minutes:$seconds " 
+
+  done
+
+}
+
+start_end_tasks
