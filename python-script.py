@@ -61,9 +61,22 @@ def start_end_tasks(input_file, task_ids):
                 message="Error"
 
 #Keeped only the first element of start_task & end_task strings since the first value reflects the time
-            results.append((task_id,start_task[0],end_task[0],f"{hours}:{minutes}:{seconds}",message))
+#            results.append((task_id,start_task[0],end_task[0],f"{hours}:{minutes}:{seconds}"))
+
+#Duration({hours}:{minutes}:{seconds}) was seen as one element and the format function was expecting 7 elements
+            results.append((task_id, start_task[0], end_task[0], hours, minutes, seconds, message))
 
     return results
 
+#Function to format the final results
+def print_formatted_results(results):
+    print(" Task ID   Start Time    End Time     Duration   Alert")
+    print("--------- ------------ ------------ ----------- --------")
+    for result in results:
+        task_id, start_task, end_task, hours, minutes, seconds, message=result
+        print(f"| {task_id:>7} | {start_task:>10} | {end_task:>10} | {hours}:{minutes:2}:{seconds:2} | {message:>7} |")
+    print("---------------------------------------------------------")
+
 output_first_function=retrieve_tasks_ids(input_file)
-print(start_end_tasks(input_file,output_first_function))
+output_second_function=start_end_tasks(input_file,output_first_function)
+print_formatted_results(output_second_function)
