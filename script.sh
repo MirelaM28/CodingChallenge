@@ -27,16 +27,37 @@ start_end_tasks(){
   do
   	start_task=$(awk -F, -v id="$id" '$2 ~ 'task' id && /START/{print $1}' $input_file)
 	end_task=$(awk -F, -v id="$id" '$2 ~ 'task' id && /END/{print $1}' $input_file)
-
 	start_seconds=$(date -d "$start_task" +%s)
-	end_seconds=$(date -d "$end_task" +%s)
-	
-	difference=$(( $end_seconds - $start_seconds ))
-	hours=$(( difference / 3600 ))
-	minutes=$(( ( difference % 3600 ) / 60 ))
-	seconds=$(( difference % 60 ))
 
-	echo "$id | $start_task | $end_task | $hours:$minutes:$seconds " 
+#Will cause output to fail due to the fact that not all tasks end
+#	end_seconds=$(date -d "$end_task" +%s)
+
+        if [[ "$end_task" =~ [0-9]+ ]]
+        then
+                end_seconds=$( date -d "$end_task" +%s )
+                difference=$(( $end_seconds - $start_seconds ))
+                hours=$(( difference / 3600 ))
+                minutes=$(( ( difference % 3600 ) / 60 ))
+                seconds=$(( difference % 60 ))
+        else
+        	end_task="NOT ENDED"
+        	hours=0
+        	minutes=0
+        	seconds=0
+
+        fi
+
+#Also included here the alert part
+	message=""
+        if [ $minutes -eq 5 ]
+        then
+                message="Warning"
+        elif [ $minutes -eq 10 ]
+        then
+                message="Error"
+        fi
+
+	echo "$id | $start_task | $end_task | $hours:$minutes:$seconds | $message " 
 
   done
 
