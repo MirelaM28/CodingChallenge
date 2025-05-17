@@ -17,6 +17,25 @@ def retrieve_tasks_ids(input_file):
                tasks_ids=list(set(re.findall(r'(?<=task )(\w+)',tasks)))
    return tasks_ids
 
+#Function that will get for each task id the start time, end time
+def start_end_tasks(input_file, task_ids):
+    results=[]
+    with open(input_file, 'r') as file:
+        lines=file.readlines()
+        for task_id in task_ids:
+            start_task=None
+            end_task=None
+            for line in lines:
+                if f'task {task_id}' in line:
+                    if 'START' in line and start_task is None:
+                        start_task=line.split(',')
+                    elif 'END' in line:
+                        end_task=line.split(',')
 
-print(retrieve_tasks_ids(input_file))
+            results.append((task_id,start_task,end_task))
+
+        return results
+
+task_id=retrieve_tasks_ids(input_file)
+print(start_end_tasks(input_file,task_id))
 
