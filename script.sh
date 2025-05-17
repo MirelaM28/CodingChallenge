@@ -11,7 +11,9 @@ retrieve_tasks_ids(){
   done < $input_file
 
 #To get the array made of the ids corresponding to the tasks
-  tasks_ids=($(echo "$tasks" | grep -o '[0-9]\+' | uniq))
+#uniq fails to remove duplicate ids if the lines are not adjacent
+#sort -u will alter the order
+  tasks_ids=($(echo "$tasks" | grep -o '[0-9]\+' | awk '!seen[$0]++'))
 
 }
 
